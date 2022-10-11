@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bigsystem-vue
+  namespace: test
+spec:
+  type: LoadBalancer
+  selector:
+    app: bigsystem-vue
+  ports:
+    # 默认情况下，为了方便起见，`targetPort` 被设置为与 `port` 字段相同的值。
+    - protocol: TCP
+      ## service暴露在cluster ip上的端口
+      port: 80
+      ## targetPort是pod上的端口,Dockerfile中指定了80
+      targetPort: 80
+      
+      
+      

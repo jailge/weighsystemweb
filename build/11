@@ -1,0 +1,51 @@
+Context context = Context.Current;
+            MemberCollection mc = new MemberCollection();
+            string material_code = context.FormDataSet["z_test_weight2.material_code"].ToString();
+            string material_type = context.FormDataSet["z_test_weight2.material_type"].ToString();
+            string material_name = context.FormDataSet["z_test_weight2.material_name"].ToString();
+            string specifications = context.FormDataSet["z_test_weight2.specifications"].ToString();
+            string supplier = context.FormDataSet["z_test_weight2.supplier"].ToString();
+            string craft = context.FormDataSet["z_test_weight2.crafts"].ToString();
+            string texture = context.FormDataSet["z_test_weight2.texture"].ToString();
+            string process = context.FormDataSet["z_test_weight2.process"].ToString();
+            string purchase_status = context.FormDataSet["z_test_weight2.purchase_status"].ToString();
+            string receiving_warehouse = context.FormDataSet["z_test_weight2.warehouse"].ToString();
+
+            string url = "http://10.10.6.182:31177/weight/weigh_material_code";
+            string data = "{\"material_code\": \""+material_code+"\",\"material_type\": \""+material_type+"\",\"material_name\": \""+material_name+"\",\"supplier\": \""+supplier+"\",\"craft\": \""+craft+"\",\"texture\": \""+texture+"\",\"process\": \""+process+"\",\"purchase_status\": \""+purchase_status+"\",\"receiving_warehouse\": \""+receiving_warehouse+"\"}";
+            // string data = "{\"material_code\": \"{0}\"}" ;
+            // string data = "{\"material_code\":\"" + CustomerCode + "\"}";
+            // string.Format(data, CustomerCode);
+            // throw new CustomMessageException(data);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+            //字符串转换为字节码
+            byte[] bs = Encoding.UTF8.GetBytes(data);
+            //参数类型，这里是json类型
+            //还有别的类型如"application/x-www-form-urlencoded"，不过我没用过(逃
+            httpWebRequest.ContentType = "application/json";
+            //参数数据长度
+            httpWebRequest.ContentLength = bs.Length;
+            //设置请求类型
+            httpWebRequest.Method = "POST";
+            //设置超时时间
+            httpWebRequest.Timeout = 20000;
+            //将参数写入请求地址中
+            httpWebRequest.GetRequestStream().Write(bs, 0, bs.Length);
+            //发送请求
+            HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            //读取返回数据
+            StreamReader streamReader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
+            string responseContent = streamReader.ReadToEnd();
+            streamReader.Close();
+            httpWebResponse.Close();
+            httpWebRequest.Abort();
+            bool aa = responseContent.Contains("true");
+            // bool aa = responseContent == "\"true\"";
+            // throw new CustomMessageException(aa.ToString());
+            if(!aa){
+                throw new CustomMessageException("没有记录，需要首称！");
+            }
+            // throw new CustomMessageException(responseContent);
+            // throw new CustomMessageException(result);
+        // string res =  HttpPost("http://10.10.181.111:8177/weight/weigh_material_code", "{\"material_code\": \"1100243874\"}");
+        // throw new CustomMessageException(res);
